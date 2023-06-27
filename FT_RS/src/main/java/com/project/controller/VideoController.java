@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.project.entity.Result;
 import com.project.entity.Video;
+import com.project.mapper.VideoMapper;
 import com.project.service.impl.VideoServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +31,21 @@ import java.util.Map;
 public class VideoController {
     @Autowired
     private VideoServiceImpl videoService;
+    @Autowired
+    private VideoMapper videoMapper;
+
 
     @GetMapping("/findAll")
     public Result findAll() {
         return Result.success(videoService.list());
+    }
+
+    @GetMapping("/findNum")
+    public Result findAll(@RequestParam(defaultValue = "1") Integer pageNum,
+                          @RequestParam(defaultValue = "4") Integer pageSize) {
+        Page<Video> page = new Page<>(pageNum, pageSize);
+        IPage<Video> videoList = videoMapper.selectPage(page, null);
+        return Result.success(videoList.getRecords());
     }
 
     @PostMapping("/add")
@@ -42,10 +54,7 @@ public class VideoController {
         return Result.success();
     }
 
-    @GetMapping("/findAllPage")
-    public Result findAllPage() {
-        return Result.success(videoService.list());
-    }
+
 
     @GetMapping("/queryData")
     @ResponseBody

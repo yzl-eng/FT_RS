@@ -3,6 +3,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import videoInfo from '../view/video/videoInfo.vue'
 import menu from '../components/menu.vue'
+import newsInfo from '../view/news/newsInfo.vue'
+import home from '../view/home/home.vue'
 // 导入路由页面的配置
 // import routes from './routes'
 
@@ -10,15 +12,27 @@ const routes = [
     
     {
         path:'/',
-        name:'Home',
+        name:'menu',
         component: menu,
         children:[
             {
                 path: '/videoInfo',
                 component: videoInfo 
-            }
+            },
+            {
+                path: '/newsInfo',
+                component: newsInfo 
+            },
+            
         ]
     },
+    {
+        path:'/home',
+        name:'home',
+        component: home,
+    
+    },
+    
 ]
 
 // 路由参数配置

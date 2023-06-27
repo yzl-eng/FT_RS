@@ -16,7 +16,7 @@
             </template>
             <el-menu-item-group title="Group One">
               <el-menu-item index="1-1"><router-link to="/videoInfo">影视管理</router-link></el-menu-item>
-              <el-menu-item index="1-2"><router-link to="/videoInfo">新闻管理</router-link></el-menu-item>
+              <el-menu-item index="1-2"><router-link to="/newsInfo">新闻管理</router-link></el-menu-item>
             </el-menu-item-group>
             <el-menu-item-group title="Group Two">
               <el-menu-item index="1-3">item three</el-menu-item>

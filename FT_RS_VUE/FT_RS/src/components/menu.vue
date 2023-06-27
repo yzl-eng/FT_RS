@@ -19,6 +19,8 @@ import router from '../router'
 import menu_header from './menu_header.vue';
 import menu_aside from './menu_aside.vue'
 
+
+
 </script>
 
   

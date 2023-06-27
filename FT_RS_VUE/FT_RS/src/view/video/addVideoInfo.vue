@@ -1,5 +1,5 @@
 <template>
-    <el-dialog title="编辑内容" width="50%" :append-to-body='true'> 
+    <el-dialog title="编辑内容" width="50%" :append-to-body='true'>
 
 
         <!-- <el-form :model="video" label-width="120px" :rules="rules"> -->
@@ -44,36 +44,26 @@
 
 
             <el-form-item label="海报封面">
-                
-                <el-upload action="#" list-type="picture-card" :auto-upload="false" :limit="1" :on-exceed="handleExceed"
-                    :on-success="handleSuccess">
-                   
-                    <el-icon>
-                        <Plus />
-                    </el-icon>
-                    
-                    <template #file="{ file }">
-                        <div>
-                            <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
-                            <span class="el-upload-list__item-actions">
-                                <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
-                                    <el-icon><zoom-in /></el-icon>
-                                </span>
-                                <span v-if="!disabled" class="el-upload-list__item-delete" @click="handleDownload(file)">
-                                    <el-icon>
-                                        <Download />
-                                    </el-icon>
-                                </span>
-                                <span v-if="!disabled" class="el-upload-list__item-delete" @click="handleRemove(file)">
-                                    <el-icon>
-                                        <Delete />
-                                    </el-icon>
-                                </span>
-                            </span>
+
+                <el-upload ref="upload" class="upload-demo" action="#" :limit="1" :on-exceed="handleExceed"
+                    :auto-upload="false" :file-list="fileList" :on-change="handleChange">
+                    <template #trigger>
+                        <el-button type="primary">选择文件</el-button>
+                        
+                    </template>
+
+                    <el-button  type="success" @click="submitUpload">
+                            上传
+                        </el-button>
+                        <el-button type="default" @click="handlePictureCardPreview">
+                            预览
+                        </el-button>
+                    <template #tip>
+                        <div class="el-upload__tip text-red">
+                            limit 1 file, new file will cover the old file
                         </div>
                     </template>
                 </el-upload>
-
                 <el-dialog v-model="dialogVisible" :width="'550px'">
                     <img class="p_img" :src="dialogImageUrl" alt="Preview Image" />
                 </el-dialog>
@@ -95,7 +85,7 @@
 import { reactive, ref } from 'vue'
 import { Delete, Download, Plus, ZoomIn } from '@element-plus/icons-vue'
 import API from '../../plugins/axiosInstance';
-import type { UploadFile } from 'element-plus'
+import type { UploadFile} from 'element-plus'
 
 
 //图片上传设置
@@ -103,21 +93,17 @@ const dialogImageUrl = ref('')
 const dialogVisible = ref(false)
 const disabled = ref(false)
 
-//移除图片
-const handleRemove = (file: UploadFile) => {
-    console.log(file)
-}
+
+
 //图片预览
 const handlePictureCardPreview = (file: UploadFile) => {
     dialogImageUrl.value = file.url!
     dialogVisible.value = true
 }
-//图片下载
-const handleDownload = (file: UploadFile) => {
-    console.log(file)
-}
+
+
 //图片替换
-import { genFileId } from 'element-plus'
+import { genFileId,ElMessage } from 'element-plus'
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
 
 const upload = ref<UploadInstance>()
@@ -128,6 +114,43 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
     file.uid = genFileId()
     upload.value!.handleStart(file)
 }
+
+
+import { onMounted } from 'vue';
+
+const formData = new FormData()
+const  currentFile=ref()
+
+// 获取用户选择的文件对象
+const handleChange = (file: any) => {
+    currentFile.value = file
+  }
+
+
+//文件上传
+
+
+const submitUpload = () => {
+    formData.append("file",currentFile.value.raw)
+    API({
+        url:'/upload/videoImg',
+        method: 'post',
+        headers:{
+            'Content-Type': 'multipart/form-data' // 指定请求的数据格式为 multipart/form-data
+        },
+        data:formData
+    })
+        .then(res => {
+           video.img=res.data.url // 获取上传成功后返回的文件链接地址
+           alert(res.data.url)
+        })
+        .catch(error => {
+             // 处理上传失败的错误
+        })
+}
+
+
+
 
 
 
@@ -172,9 +195,6 @@ const video = reactive({
     introduction: ''
 });
 
-const handleSuccess = (response, file) => {
-    video.img = URL.createObjectURL(file.raw)
-}
 
 
 // 表单验证规则
