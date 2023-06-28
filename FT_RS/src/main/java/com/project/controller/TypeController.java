@@ -7,11 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author LZY
@@ -24,10 +25,16 @@ public class TypeController {
     private TypeServiceImpl typeService;
 
     @GetMapping("/findAll")
-    public Result findAll(){
+    public Result findAll() {
         return Result.success(typeService.list());
     }
 
+    @GetMapping("/findById")
+    public Result findById(
+            @RequestParam Integer id
+    ) {
+        return Result.success(typeService.getById(id));
+    }
 
 }
 

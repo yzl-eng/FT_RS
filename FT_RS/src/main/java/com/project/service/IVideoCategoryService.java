@@ -1,7 +1,7 @@
 package com.project.service;
 
-import com.project.VO.VideoCategory;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.project.entity.VideoCategory;
 
 /**
  * <p>

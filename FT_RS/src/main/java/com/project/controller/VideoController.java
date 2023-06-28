@@ -47,11 +47,15 @@ public class VideoController {
         IPage<Video> videoList = videoMapper.selectPage(page, null);
         return Result.success(videoList.getRecords());
     }
+    @GetMapping("/findById")
+    public Result findById(@RequestParam Long id){
+       return Result.success( videoService.getById(id));
+    }
 
     @PostMapping("/add")
     public Result addVideoInfo(@RequestBody Video video) {
         videoService.save(video);
-        return Result.success();
+        return Result.success(video);
     }
 
 
@@ -59,14 +63,20 @@ public class VideoController {
     @GetMapping("/queryData")
     @ResponseBody
     public Result queryData(@RequestParam(defaultValue = "1") Integer pageNum,
-                            @RequestParam(defaultValue = "5") Integer pageSize
+                            @RequestParam(defaultValue = "5") Integer pageSize,
+                            @RequestParam(defaultValue = "") Integer typeId
+
     ) {
         // 当前页码和每页大小
         Page<Video> page = new Page<>(pageNum, pageSize);
         // 查询条件
         QueryWrapper<Video> wrapper = new QueryWrapper<>();
+        if(typeId != null){
+            wrapper.eq("type_id",typeId);
+        }
+//
         // 执行分页查询
-        IPage<Video> iPage = videoService.page(page);
+        IPage<Video> iPage = videoService.page(page,wrapper);
         // 获取分页结果
         List<Video> entityList = iPage.getRecords();
         long total = iPage.getTotal();

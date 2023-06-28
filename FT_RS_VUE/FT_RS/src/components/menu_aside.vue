@@ -4,6 +4,7 @@
           class="el-menu-vertical-demo"
           @open="handleOpen"
           @close="handleClose"
+          router
         >
         <el-menu-item index="0">
             <el-icon><House /></el-icon>
@@ -15,8 +16,8 @@
               <span>管理面板</span>
             </template>
             <el-menu-item-group title="Group One">
-              <el-menu-item index="1-1"><router-link to="/videoInfo">影视管理</router-link></el-menu-item>
-              <el-menu-item index="1-2"><router-link to="/newsInfo">新闻管理</router-link></el-menu-item>
+              <el-menu-item index="/videoInfo">影视管理</el-menu-item>
+              <el-menu-item index="/newsInfo">新闻管理</el-menu-item>
             </el-menu-item-group>
             <el-menu-item-group title="Group Two">
               <el-menu-item index="1-3">item three</el-menu-item>

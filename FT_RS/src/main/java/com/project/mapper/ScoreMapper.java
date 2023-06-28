@@ -2,6 +2,7 @@ package com.project.mapper;
 
 import com.project.entity.Score;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * <p>
@@ -11,6 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author LZY
  * @since 2023-06-11
  */
+@Mapper
 public interface ScoreMapper extends BaseMapper<Score> {
 
 }

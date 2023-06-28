@@ -35,8 +35,8 @@
             </el-form-item>
 
             <el-form-item label="类型">
-                <el-checkbox-group v-model="video.category">
-                    <el-checkbox v-for="(category, index) in categoryData" :key="index" :label="category.code" border>{{
+                <el-checkbox-group v-model="categorys">
+                    <el-checkbox v-for="(category, index) in categoryData" :key="index" :label="category.id" border>{{
                         category.name }}</el-checkbox>
                 </el-checkbox-group>
             </el-form-item>
@@ -49,15 +49,15 @@
                     :auto-upload="false" :file-list="fileList" :on-change="handleChange">
                     <template #trigger>
                         <el-button type="primary">选择文件</el-button>
-                        
+
                     </template>
 
-                    <el-button  type="success" @click="submitUpload">
-                            上传
-                        </el-button>
-                        <el-button type="default" @click="handlePictureCardPreview">
-                            预览
-                        </el-button>
+                    <el-button type="success" @click="submitUpload">
+                        上传
+                    </el-button>
+                    <el-button type="default" @click="handlePictureCardPreview">
+                        预览
+                    </el-button>
                     <template #tip>
                         <div class="el-upload__tip text-red">
                             limit 1 file, new file will cover the old file
@@ -85,7 +85,7 @@
 import { reactive, ref } from 'vue'
 import { Delete, Download, Plus, ZoomIn } from '@element-plus/icons-vue'
 import API from '../../plugins/axiosInstance';
-import type { UploadFile} from 'element-plus'
+import type { UploadFile } from 'element-plus'
 
 
 //图片上传设置
@@ -103,7 +103,7 @@ const handlePictureCardPreview = (file: UploadFile) => {
 
 
 //图片替换
-import { genFileId,ElMessage } from 'element-plus'
+import { genFileId, ElMessage } from 'element-plus'
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
 
 const upload = ref<UploadInstance>()
@@ -119,33 +119,33 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
 import { onMounted } from 'vue';
 
 const formData = new FormData()
-const  currentFile=ref()
+const currentFile = ref()
 
 // 获取用户选择的文件对象
 const handleChange = (file: any) => {
     currentFile.value = file
-  }
+}
 
 
 //文件上传
 
 
 const submitUpload = () => {
-    formData.append("file",currentFile.value.raw)
+    formData.append("file", currentFile.value.raw)
     API({
-        url:'/upload/videoImg',
+        url: '/upload/videoImg',
         method: 'post',
-        headers:{
+        headers: {
             'Content-Type': 'multipart/form-data' // 指定请求的数据格式为 multipart/form-data
         },
-        data:formData
+        data: formData
     })
         .then(res => {
-           video.img=res.data.url // 获取上传成功后返回的文件链接地址
-           alert(res.data.url)
+            video.img = res.data.url // 获取上传成功后返回的文件链接地址
+            alert(res.data.url)
         })
         .catch(error => {
-             // 处理上传失败的错误
+            // 处理上传失败的错误
         })
 }
 
@@ -187,14 +187,49 @@ const video = reactive({
     screenwriter: '',
     starring: '',
     type: '',
-    category: [],
     language: '',
     releasedata: '',
     length: '',
     img: '',
     introduction: ''
 });
+const categorys = ref()
 
+const id = ref()
+const videoId = ref()
+//添加
+const add = function () {
+    API({
+        url: '/video/add',
+        method: 'post',
+        data: video
+    }).then((res) => {
+        id.value = res.data.data.id;
+        categoryAdd(id)
+    });
+    return {
+        id
+    }
+
+}
+const categoryAdd = function (id) {
+    const params = {
+        categorys: categorys.value,
+        videoId: id.value
+    }
+    API({
+        url: '/videoCategory/add',
+        method: 'post',
+        data: categorys
+        // headers: {
+        //     'Content-Type': 'application/json'
+        // },
+    }).then((res) => {
+
+    });
+
+}
+getCategory()
 
 
 // 表单验证规则
@@ -254,7 +289,7 @@ const video = reactive({
 // })
 
 const onSubmit = () => {
-    console.log('submit!')
+    add()
 }
 </script>
 

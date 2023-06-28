@@ -5,6 +5,11 @@ import videoInfo from '../view/video/videoInfo.vue'
 import menu from '../components/menu.vue'
 import newsInfo from '../view/news/newsInfo.vue'
 import home from '../view/home/home.vue'
+import videoDetail from '../view/home/video_detail.vue'
+import main from '../view/home/main.vue'
+import films from '../view/home/films_display.vue'
+import teleplays from '../view/home/teleplays_display.vue'
+import login from '../view/login.vue'
 // 导入路由页面的配置
 // import routes from './routes'
 
@@ -30,15 +35,38 @@ const routes = [
         path:'/home',
         name:'home',
         component: home,
-    
+        children:[
+            {
+                path: '/main',
+                component: main 
+            },
+            {
+                path: '/videoDetail/:id',
+                component: videoDetail 
+            },
+            {
+                path: '/films',
+                component: films 
+            },
+            {
+                path: '/teleplays',
+                component: teleplays 
+            },
+        
+        ]
     },
+    {
+        path:'/login',
+        name:'login',
+        component: login,
+    }
     
 ]
 
 // 路由参数配置
 const router = createRouter({
     // 使用hash(createWebHashHistory)模式，(createWebHistory是HTML5历史模式，支持SEO)
-    history: createWebHistory(),
+    history: createWebHistory(process.env.BASE_URL),
     routes: routes, 
 })
 

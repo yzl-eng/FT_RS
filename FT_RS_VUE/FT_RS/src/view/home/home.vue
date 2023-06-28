@@ -1,31 +1,37 @@
 <template>
     <div class="common-layout">
         <el-container>
-            <el-header>
+            <el-header height="80px" class="header">
+                <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" :ellipsis="false"
+                    @select="handleSelect" active-text-color="#9ecc3e" style="height: 80px;" router>
+                    <el-menu-item index="0">LOGO</el-menu-item>
+                    <div class="flex-grow" />
+                    <el-menu-item index="/main"><el-icon>
+                            <House />
+                        </el-icon>首页</el-menu-item>
+                    <el-menu-item index="/films"><el-icon>
+                            <Film />
+                        </el-icon>电影</el-menu-item>
+                    <el-menu-item index="/teleplays"><el-icon>
+                            <Platform />
+                        </el-icon>电视剧</el-menu-item>
+                    <el-menu-item index="4"><el-icon>
+                            <VideoPlay />
+                        </el-icon>综艺</el-menu-item>
+                    <el-menu-item index="5"><el-icon>
+                            <VideoCameraFilled />
+                        </el-icon>纪录片</el-menu-item>
+                    <div class="flex-grow" />
+                    <div class="research"><el-input v-model="input1" size="large" placeholder="搜索感兴趣的影视"
+                            :prefix-icon="Search" class="input"/>
+                    </div>
+                    <div class="flex-grow" />
+
+                </el-menu>
             </el-header>
             <el-container>
                 <el-main>
-                    <div class="carousel">
-                        <el-carousel :interval="5000" arrow="always" height="550px">
-                            <el-carousel-item v-for="(video, index) in  videos_carousel " :key="index">
-                                <div class="carousel_img" :style="{ backgroundImage: `url(${video.img})` }">
-                                    <div class="intro">
-                                        <h1 style="font-size:x-large;"><span v-text="video.name"></span></h1>
-                                        <h1 style="font-size:small;"><span v-text="video.releasedate"></span>&emsp;评分：<span
-                                                v-text="video.score"></span></h1>
-                                        <el-text class="mx-1">{{ video.introduction }}</el-text>
-                                    </div>
-                                </div>
-                            </el-carousel-item>
-                        </el-carousel>
-                    </div>
-
-                    <div class="body1">
-                        <hot_play></hot_play>
-                    </div>
-                    <div class="body1">
-                        <news_dispaly></news_dispaly>
-                    </div>
+                    <router-view></router-view>
                 </el-main>
             </el-container>
 
@@ -38,108 +44,41 @@
 import router from '../../router'
 import { ref, watchEffect } from 'vue'
 import API from "../../plugins/axiosInstance"
-import hot_play from './hot_play.vue';
-import news_dispaly from './news_dispaly.vue';
+import Main from "./main.vue"
 
-const videos_carousel = ref()
-const display_num = ref(4)
-
-const getCarouselData = function () {
-    const params = {
-        pageNum: 1,
-        pageSize: display_num.value,
-
-    };
-
-    API.get("/video/findNum", { params }).then((res) => {
-        videos_carousel.value = res.data.data;
-    });
-    return {
-        videos_carousel
-    }
-
-}
-getCarouselData()
-const videos_hot = ref()
-const getHotData = function () {
-    const params = {
-        pageNum: 1,
-        pageSize: 5,
-
-    };
-    API.get("/video/findNum", { params })
-        .then((res) => {
-            videos_hot.value = res.data.data;
-        });
-    return {
-        videos_hot
-    }
-
+const activeIndex = ref('1')
+const handleSelect = (key: string, keyPath: string[]) => {
+    console.log(key, keyPath)
 }
 
-getHotData()
-
-
+import { Search } from '@element-plus/icons-vue'
+const input1 = ref('')
 </script>
 
   
 <style scoped lang="less">
-.carousel {
+.header {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 6;
 
-    max-width: 1100px;
-    margin: 0 auto;
-    margin-bottom: 50px;
+    .research {
+        display: flex;
+        justify-content: center;
+        /* 水平居中 */
+        align-items: center;
 
-
-    .carousel_img {
-        width: 100%;
-        height: 100%;
-        background-size: cover;
-        background-repeat: no-repeat;
-        // border-radius: 50px;
-
+        /* 垂直居中 */
+        .input:focus {
+            border-color: #9ecc3e;
+            // box-shadow: 0 0 2px rgba(0, 0, 255, 0.5);
+        }
     }
 
-    .intro {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        padding: 16px;
-        box-sizing: border-box;
-        background-color: rgba(0, 0, 0, 0.192);
-        color: #ffffff;
-        z-index: 1;
-        /* 提高层叠顺序 */
-    }
-
-    .mx-1 {
-        font-size: small;
-        line-height: 20px;
-        height: 50px;
-        color: #ffffff;
-    }
 }
 
-.body1 {
-    max-width: 1100px;
-    margin: 0 auto;
-    margin-bottom: 50px;
-}
-
-.el-carousel__item h3 {
-    color: #475669;
-    opacity: 0.75;
-    line-height: 300px;
-    margin: 0;
-    text-align: center;
-}
-
-.el-carousel__item:nth-child(2n) {
-    background-color: #99a9bf;
-}
-
-.el-carousel__item:nth-child(2n + 1) {
-    background-color: #d3dce6;
+.flex-grow {
+    flex-grow: 1;
 }
 </style>

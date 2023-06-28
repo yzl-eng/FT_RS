@@ -25,7 +25,7 @@ public class UploadController {
                 Files.write(path, bytes);
 
                 // 返回上传成功后的文件链接地址
-                return "src/assets/video_imgs/" + file.getOriginalFilename();
+                return "/src/assets/video_imgs/" + file.getOriginalFilename();
             } catch (IOException e) {
                 e.printStackTrace();
             }

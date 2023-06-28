@@ -6,11 +6,11 @@
         <el-main>
             <el-space wrap size="small">
                 <el-row :gutter="10">
-                    <el-col v-for="(item, index) in  news " :key="index" :span="4">
+                    <el-col v-for="(item, index) in  news " :key="index" :span="6">
                         <el-card :body-style="{ padding: '0px' }" shadow="hover" class="card">
                             <el-image :src="item.img" class="image" fit="fill" />
                             <div style="padding: 14px">
-                                <div><span v-text="item.title"></span></div>
+                                <div style="height: 20px;"><span v-text="item.title"></span></div>
 
                             </div>
                         </el-card>
@@ -28,7 +28,7 @@ const news = ref()
 const getNewsData = function () {
     const params = {
         pageNum: 1,
-        pageSize: 5,
+        pageSize: 4,
 
     };
     API.get("/news/findNum", { params })

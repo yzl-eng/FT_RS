@@ -1,6 +1,6 @@
 package com.project.service.impl;
 
-import com.project.VO.VideoCategory;
+import com.project.entity.VideoCategory;
 import com.project.mapper.VideoCategoryMapper;
 import com.project.service.IVideoCategoryService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
