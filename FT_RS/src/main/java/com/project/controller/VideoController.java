@@ -4,6 +4,7 @@ package com.project.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.project.entity.News;
 import com.project.entity.Result;
 import com.project.entity.Video;
 import com.project.mapper.VideoMapper;
@@ -27,6 +28,7 @@ import java.util.Map;
  * @since 2023-06-11
  */
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/video")
 public class VideoController {
     @Autowired
@@ -58,7 +60,17 @@ public class VideoController {
         return Result.success(video);
     }
 
-
+    @PostMapping("/delete")
+    public Result delete(@RequestBody News news) {
+        Long id = news.getId();
+        try {
+            videoService.removeById(id);
+            System.out.println(id);
+            return Result.success();
+        } catch (Exception e) {
+            return Result.error("删除失败");
+        }
+    }
 
     @GetMapping("/queryData")
     @ResponseBody
@@ -83,6 +95,11 @@ public class VideoController {
         // 返回分页结果
         return Result.success().data("records", entityList)
                 .data("total", total);
+    }
+    @PostMapping("/update")
+    public Result update(@RequestBody Video video) {
+        videoService.updateById(video);
+        return Result.success();
     }
 
 }

@@ -10,6 +10,8 @@ import main from '../view/home/main.vue'
 import films from '../view/home/films_display.vue'
 import teleplays from '../view/home/teleplays_display.vue'
 import login from '../view/login.vue'
+import show from '../view/home/show_display.vue'
+import docu from '../view/home/docu_display.vue'
 // 导入路由页面的配置
 // import routes from './routes'
 
@@ -51,6 +53,14 @@ const routes = [
             {
                 path: '/teleplays',
                 component: teleplays 
+            },
+            {
+                path: '/docu',
+                component: docu 
+            },
+            {
+                path: '/show',
+                component: show 
             },
         
         ]

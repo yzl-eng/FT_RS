@@ -40,15 +40,15 @@
 
 
                     <el-table-column fixed="right" label="操作" width="180">
-                        <template #default>
-                            <el-button type="primary" size="middle" @click="handleClick">编辑</el-button>
+                        <template #default="scope">
+                            <el-button type="primary" size="middle" @click="editClick(tableData[scope.$index])">编辑</el-button>
 
 
-                            <add-video-info v-model="dialogVisible" lock-scroll></add-video-info>
+                            <edit-video-info v-model="editdialogVisible" lock-scroll  :editData="editData" @cancel="cancelDialog"></edit-video-info>
 
 
 
-                            <el-button type="danger" size="middle">删除</el-button>
+                            <el-button type="danger" size="middle" @click="deleteClick(tableData[scope.$index])">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -61,6 +61,7 @@
   
 <script lang="ts" setup>
 import addVideoInfo from './addVideoInfo.vue';
+import editVideoInfo from './editVideoInfo.vue';
 import { reactive, ref } from 'vue'
 import { Plus, Delete } from '@element-plus/icons-vue'
 
@@ -118,9 +119,36 @@ function handlePaginationChange(pageIndex) {
     currentPage.value = pageIndex;
     fetchData()
 }
+const videoId=ref()
+//删除
+const deleteClick = (obj:any) => {
+    API({
+        url: '/video/delete',
+        method: 'post',
+        data: obj
+    }).then((res) => {
+        const params={
+            videoId:obj.id
+        }
+        
+        API.get("/videoCategory/delete", {params} )
+        fetchData(); // 删除成功后刷新数据列表
+    });
+}
 
+//编辑操作
+const editData=ref()
+const editdialogVisible = ref(false)
+const editClick = (obj) => {
+    // 点击编辑按钮时显示对话框
+    editdialogVisible.value = true;
+    editData.value=obj
+}
 
-
+function cancelDialog () {
+    editdialogVisible.value = false;
+    fetchData();
+}
 
 
 

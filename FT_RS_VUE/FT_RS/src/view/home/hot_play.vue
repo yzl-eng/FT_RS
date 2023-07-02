@@ -40,6 +40,9 @@ const getHotData = function () {
     API.get("/video/findNum", { params })
         .then((res) => {
             videos_hot.value = res.data.data;
+            if(res.data.code==0){
+                router.push('/login')
+            }
         });
     return {
         videos_hot

@@ -39,20 +39,23 @@
                         <ChatDotRound />
                     </el-icon>&nbsp;相关评论</h2>
             </div>
-            <div class="mark">
-                <el-rate v-model="rate" :texts="['很差', '较差', '一般', '推荐', '强推']" show-text allow-half />
-                <el-button type="primary" size="middle" style="float: right;">发表评价</el-button>
+
+            <div class="remark" style="margin-bottom: 50px;">
+                <el-rate v-model="comment.score" :texts="['很差', '较差', '一般', '推荐', '强推']" show-text allow-half />
+                <el-button type="primary" size="middle" style="float: right;" @click="submit">发表评价</el-button>
                 <div style="margin: 20px 0" />
-                <el-input v-model="textarea" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea"
-                    placeholder="留下你的评价" />
+                <el-input v-model="comment.remark" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea" placeholder="留下你的评价" />
             </div>
-            <div class="comment">
+
+            <div class="comment" style="margin-bottom: 50px;">
                 <el-row :gutter="10">
                     <el-col v-for="(item, index) in comments" :key="index" :span="12">
                         <el-card :body-style="{ padding: '0px' }" shadow="hover" class="card">
                             <template #header>
                                 <div class="card-header">
-                                    <span>Card name</span>&emsp;&emsp;
+                                    <el-avatar> <el-avatar
+                                            src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
+                                    </el-avatar><el-text style="width: 120px;" truncated size="small">{{ }}</el-text>
                                     <el-rate :model-value="score(item.score)" disabled text-color="#f7ba2a" />
                                     &emsp;&emsp; <span v-text="item.createTime"
                                         style="color: rgb(215, 216, 216);font-size: small;"></span>
@@ -62,7 +65,7 @@
                             <div style="padding: 14px">
 
                                 <div style="max-height: 100px;">
-                                    <el-text class="mx-1">{{ item.remark }}</el-text>
+                                    <el-text class="mx-1" >{{ item.remark }}</el-text>
                                 </div>
                             </div>
                         </el-card>
@@ -74,7 +77,7 @@
 </template>
   
 <script setup>
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 // import route from '../../router'
 import API from "../../plugins/axiosInstance"
 
@@ -110,6 +113,7 @@ const getVideoDetail = function () {
     API.get("/video/findById", { params })
         .then((res) => {
             video.value = res.data.data;
+            comment.value.videoId=res.data.data.id;
         });
     return {
         video
@@ -122,7 +126,7 @@ const getVideoDetail = function () {
 
 }
 getVideoDetail()
-
+//获取评论数据
 const comments = ref()
 const textarea = ref('')
 const getCommentData = function () {
@@ -144,21 +148,63 @@ const getCommentData = function () {
 const rate = ref()
 
 getCommentData()
-const getData = function () {
+
+const name=ref()
+const getUserName = function (temp) {
     const params = {
-        id: comments
+        id: temp
 
     };
-    API.get("/score/findAll", { params })
+    API.get("/user/findById", { params })
         .then((res) => {
-            comments.value = res.data.data.records;
+           name.value= res.data.data.username
         });
-    return {
-        comments
+        return {
+        name
     }
 
+
+}
+const user = ref({
+    username: '',
 }
 
+)
+
+const item = JSON.parse(window.localStorage.getItem('user'))
+const findUser = function () {
+   const params={
+    id:item.id
+   }
+    API.get('/user/findById', {params}).then((res) => {
+        user.value = res.data.data;
+        comment.value.userId=res.data.data.id;
+    });
+}
+onMounted:{
+    findUser()
+}
+
+const comment=ref(
+    {
+        score:0,
+        videoId:'',
+        userId:'',
+        remark:''
+    }
+)
+const submit=function(){
+    comment.value.score=comment.value.score*2
+    API({
+        url: '/score/update',
+        method: 'post',
+        data: comment.value
+    }).then((res) => {
+        comment.value.score=0,
+        comment.value.remark='',
+        getCommentData()
+    })
+}
 
 </script>
 
@@ -215,19 +261,20 @@ const getData = function () {
     height: 100%;
 
     .top {}
-        .mark{
-            margin-bottom: 30px;
-        }
-        .comment {
-            .card {
-                height: 100%;
 
-                .mx-1 {
-                    height: 100%;
-                }
-            }
-
-        }
+    .mark {
+        margin-bottom: 30px;
     }
 
+    .comment {
+        .card {
+            height: 100%;
+
+            .mx-1 {
+                height: 100%;
+            }
+        }
+
+    }
+}
 </style>

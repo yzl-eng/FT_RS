@@ -19,13 +19,23 @@
                 <el-input v-model="video.starring" />
             </el-form-item>
             <el-form-item label="形式">
-                <el-select v-model="video.type" placeholder="选择媒体形式">
-                    <el-option v-for="(type, index) in typeData" :key="index" :label="type.type" :value="type.type" />
+                <el-select v-model="video.typeId" placeholder="选择媒体形式">
+                    <el-option v-for="(type, index) in typeData" :key="index" :label="type.type" :value="type.id" />
                 </el-select>
+            </el-form-item>
+            <el-form-item label="语言">
+                <el-col :span="8">
+                <el-input v-model="video.language" />
+            </el-col>
+            <el-col :span="16">
+                    <el-form-item label="出品国家/地区">
+                        <el-input v-model="video.countryRegion" />
+                    </el-form-item>
+                </el-col>
             </el-form-item>
             <el-form-item label="上映时间">
                 <el-col :span="11">
-                    <el-date-picker v-model="video.releasedata" type="date" placeholder="选择日期" style="width: 100%" />
+                    <el-date-picker v-model="video.releasedate" type="date" placeholder="选择日期" style="width: 100%" />
                 </el-col>
                 <el-col :span="13">
                     <el-form-item label="影片时长">
@@ -35,7 +45,7 @@
             </el-form-item>
 
             <el-form-item label="类型">
-                <el-checkbox-group v-model="categorys">
+                <el-checkbox-group v-model="categoryIds">
                     <el-checkbox v-for="(category, index) in categoryData" :key="index" :label="category.id" border>{{
                         category.name }}</el-checkbox>
                 </el-checkbox-group>
@@ -141,8 +151,8 @@ const submitUpload = () => {
         data: formData
     })
         .then(res => {
-            video.img = res.data.url // 获取上传成功后返回的文件链接地址
-            alert(res.data.url)
+            video.value.img = res.data // 获取上传成功后返回的文件链接地址
+            alert(video.img)
         })
         .catch(error => {
             // 处理上传失败的错误
@@ -180,29 +190,33 @@ const getCategory = function () {
 getCategory()
 
 // do not use same name with ref
-const video = reactive({
+const video = ref({
     name: '',
     countryRegion: '',
     director: '',
     screenwriter: '',
     starring: '',
-    type: '',
+    typeId: '',
     language: '',
-    releasedata: '',
+    releasedate: ref(),
     length: '',
     img: '',
+    scroe:ref(0),
     introduction: ''
 });
 const categorys = ref()
-
+const categoryIds = ref()
 const id = ref()
 const videoId = ref()
 //添加
 const add = function () {
+  video.value.releasedate.setHours(0, 0, 0, 0);
+  video.value.releasedate=video.value.releasedate.toISOString().split("T")[0];
+  alert(video.value.releasedate)
     API({
         url: '/video/add',
         method: 'post',
-        data: video
+        data: video.value
     }).then((res) => {
         id.value = res.data.data.id;
         categoryAdd(id)
@@ -214,20 +228,10 @@ const add = function () {
 }
 const categoryAdd = function (id) {
     const params = {
-        categorys: categorys.value,
+        categorys: categoryIds.value.join(','),
         videoId: id.value
     }
-    API({
-        url: '/videoCategory/add',
-        method: 'post',
-        data: categorys
-        // headers: {
-        //     'Content-Type': 'application/json'
-        // },
-    }).then((res) => {
-
-    });
-
+    API.get("/videoCategory/add", { params })
 }
 getCategory()
 

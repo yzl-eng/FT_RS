@@ -9,11 +9,7 @@ import com.project.entity.Score;
 import com.project.entity.Video;
 import com.project.service.impl.ScoreServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -41,8 +37,7 @@ public class ScoreController {
         Page<Score> page = new Page<>(pageNum, pageSize);
         // 查询条件
         QueryWrapper<Score> wrapper = new QueryWrapper<>();
-        System.out.println(id);
-        wrapper.eq("video_id",id);
+        wrapper.eq("video_id",id).orderByAsc("create_time");;
         System.out.println(wrapper.getSqlSegment());
         // 执行分页查询
         IPage<Score> iPage = scoreService.page(page,wrapper);
@@ -59,5 +54,12 @@ public class ScoreController {
 
         return Result.success(scoreService.list());
     }
+    @PostMapping("/update")
+    public Result update(@RequestBody Score score) {
+        // 当前页码和每页大小
+
+        return Result.success(scoreService.save(score));
+    }
+
 }
 

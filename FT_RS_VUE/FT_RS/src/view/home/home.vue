@@ -15,18 +15,24 @@
                     <el-menu-item index="/teleplays"><el-icon>
                             <Platform />
                         </el-icon>电视剧</el-menu-item>
-                    <el-menu-item index="4"><el-icon>
+                    <el-menu-item index="/show"><el-icon>
                             <VideoPlay />
                         </el-icon>综艺</el-menu-item>
-                    <el-menu-item index="5"><el-icon>
+                    <el-menu-item index="/docu"><el-icon>
                             <VideoCameraFilled />
                         </el-icon>纪录片</el-menu-item>
                     <div class="flex-grow" />
                     <div class="research"><el-input v-model="input1" size="large" placeholder="搜索感兴趣的影视"
-                            :prefix-icon="Search" class="input"/>
+                            :prefix-icon="Search" class="input" />
                     </div>
                     <div class="flex-grow" />
-
+                    <el-sub-menu index="2">
+                        <template #title><el-avatar> <el-avatar
+                                    src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
+                            </el-avatar><el-text truncated size="small">{{ user.username }}</el-text></template>
+                        <el-menu-item index="/">个人中心</el-menu-item>
+                        <el-menu-item index="/login">退出登录</el-menu-item>
+                    </el-sub-menu>
                 </el-menu>
             </el-header>
             <el-container>
@@ -42,7 +48,7 @@
   
 <script lang="ts" setup>
 import router from '../../router'
-import { ref, watchEffect } from 'vue'
+import { onMounted, ref, watchEffect } from 'vue'
 import API from "../../plugins/axiosInstance"
 import Main from "./main.vue"
 
@@ -53,6 +59,28 @@ const handleSelect = (key: string, keyPath: string[]) => {
 
 import { Search } from '@element-plus/icons-vue'
 const input1 = ref('')
+
+
+const user = ref({
+    username: '',
+}
+
+)
+
+const item = JSON.parse(window.localStorage.getItem('user'))
+const findUser = function () {
+   const params={
+    id:item.id
+   }
+    API.get('/user/findById', {params}).then((res) => {
+        user.value = res.data.data;
+    });
+}
+onMounted:{
+    findUser()
+}
+
+
 </script>
 
   
